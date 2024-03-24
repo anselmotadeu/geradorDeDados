@@ -1,0 +1,11 @@
+{
+  "name": "gerar-dados",
+  "version": "1.0.0",
+  "description": "Projeto de geração de dados randômicos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anselmo Santos",
+  "license": "ISC"
+}
