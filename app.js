@@ -1,22 +1,89 @@
+
+// Versão consolidada e sem duplicações
+// Gera e popula todos os campos, além de mostrar info de CEP, bandeira do cartão e DDD
 function gerarDados() {
+  // CPF / RG
   document.getElementById('cpf').value = gerarCPF();
   document.getElementById('rg').value = gerarRG();
 
+  // Cartão: aceita retorno novo (obj) ou antigo (string)
   const cartao = gerarNumeroCartao();
-  document.getElementById('cartao').value = cartao.numero;
-  const bandeira = document.getElementById('cartao-bandeira');
-  bandeira.className = 'card-brand-icon ' + cartao.icone;
-  bandeira.title = cartao.bandeira;
+  const cartaoInput = document.getElementById('cartao');
+  try {
+    if (typeof cartao === 'string') {
+      cartaoInput.value = cartao;
+    } else if (cartao && cartao.numero) {
+      cartaoInput.value = cartao.numero;
+    } else {
+      cartaoInput.value = String(cartao);
+    }
+  } catch (e) {
+    console.debug('Erro ao setar número do cartão', e);
+  }
 
+  // Bandeira (se disponível)
+  const bandeiraEl = document.getElementById('cartao-bandeira');
+  if (bandeiraEl) {
+    if (cartao && typeof cartao === 'object' && cartao.icone) {
+      bandeiraEl.className = 'card-brand-icon ' + cartao.icone;
+      bandeiraEl.title = cartao.bandeira || '';
+    } else {
+      // limpa classe de ícone se não disponível
+      bandeiraEl.className = 'card-brand-icon';
+      bandeiraEl.title = '';
+    }
+  }
+
+  // CEP
   const cepGerado = gerarCEP();
-  document.getElementById('cep').value = cepGerado.cep;
+  const cepInput = document.getElementById('cep');
   const cepInfo = document.getElementById('cep-info');
-  cepInfo.innerHTML = `<i class="fa-solid fa-city"></i> ${cepGerado.cidade} &mdash; ${cepGerado.estado}`;
-  cepInfo.style.display = 'flex';
+  if (cepInput) {
+    if (typeof cepGerado === 'string') {
+      cepInput.value = cepGerado;
+    } else if (cepGerado && cepGerado.cep) {
+      cepInput.value = cepGerado.cep;
+    } else {
+      cepInput.value = String(cepGerado);
+    }
+  }
+  if (cepInfo) {
+    if (cepGerado && typeof cepGerado === 'object' && cepGerado.cidade) {
+      cepInfo.innerHTML = `<i class="fa-solid fa-city"></i> ${cepGerado.cidade} &mdash; ${cepGerado.estado}`;
+      cepInfo.style.display = 'flex';
+    } else {
+      cepInfo.style.display = 'none';
+    }
+  }
 
-  document.getElementById('email').value = gerarEmail();
-  document.getElementById('telefone').value = gerarTelefone();
+  // Telefone com info de DDD
+  const telGerado = gerarTelefone();
+  const telInput = document.getElementById('telefone');
+  const telInfo = document.getElementById('telefone-info');
+  if (telInput) {
+    if (typeof telGerado === 'string') {
+      telInput.value = telGerado;
+    } else if (telGerado && telGerado.numero) {
+      telInput.value = telGerado.numero;
+    } else {
+      telInput.value = String(telGerado);
+    }
+  }
+  if (telInfo) {
+    if (telGerado && typeof telGerado === 'object' && telGerado.cidade) {
+      telInfo.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${telGerado.cidade} &mdash; ${telGerado.estado}`;
+      telInfo.style.display = 'flex';
+    } else {
+      telInfo.style.display = 'none';
+    }
+  }
 
+  // E-mail
+  const email = gerarEmail();
+  const emailInput = document.getElementById('email');
+  if (emailInput) emailInput.value = email;
+
+  // Mostrar botões de copiar
   var botoesCopiar = document.querySelectorAll('.copy-btn');
   botoesCopiar.forEach(function (botao) {
     botao.style.display = 'flex';
@@ -120,11 +187,27 @@ function gerarEmail() {
   return `${nome}${sufixo}@${provedor}`;
 }
 
+// Mapeamento DDD -> estado / cidade (simplificado)
+const dddMap = {
+  '11': { estado: 'SP', cidade: 'São Paulo' },
+  '21': { estado: 'RJ', cidade: 'Rio de Janeiro' },
+  '31': { estado: 'MG', cidade: 'Belo Horizonte' },
+  '41': { estado: 'PR', cidade: 'Curitiba' },
+  '51': { estado: 'RS', cidade: 'Porto Alegre' },
+  '61': { estado: 'DF', cidade: 'Brasília' },
+  '71': { estado: 'BA', cidade: 'Salvador' },
+  '81': { estado: 'PE', cidade: 'Recife' },
+  '85': { estado: 'CE', cidade: 'Fortaleza' },
+  '92': { estado: 'AM', cidade: 'Manaus' }
+};
+
 function gerarTelefone() {
-  const ddds = ['11', '21', '31', '41', '51', '61', '71', '81', '85', '92'];
+  const ddds = Object.keys(dddMap);
   const ddd = ddds[Math.floor(Math.random() * ddds.length)];
   const telefone = Array.from({ length: 8 }, () => Math.floor(Math.random() * 10)).join('');
-  return `(${ddd}) 9${telefone.substring(0, 4)}-${telefone.substring(4, 8)}`;
+  const numero = `(${ddd}) 9${telefone.substring(0, 4)}-${telefone.substring(4, 8)}`;
+  const info = dddMap[ddd] || { estado: 'BR', cidade: 'Localidade' };
+  return { numero: numero, ddd: ddd, estado: info.estado, cidade: info.cidade };
 }
 
 function copiarConteudo(idElemento) {
@@ -132,9 +215,13 @@ function copiarConteudo(idElemento) {
   navigator.clipboard.writeText(elemento.value).then(function () {
     mostrarToast('Copiado para a área de transferência!');
   }).catch(function () {
-    elemento.select();
-    document.execCommand('copy');
-    mostrarToast('Copiado!');
+    try {
+      elemento.select();
+      document.execCommand('copy');
+      mostrarToast('Copiado!');
+    } catch (e) {
+      mostrarToast('Não foi possível copiar');
+    }
   });
 }
 
@@ -147,7 +234,6 @@ function mostrarToast(mensagem) {
     toast.classList.remove('show');
   }, 2500);
 }
-
 
 function gerarCPF() {
   const cpf = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10)).join('');
