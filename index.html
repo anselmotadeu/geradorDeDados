@@ -3,64 +3,127 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Gerador de Dados Fictícios Brasileiros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataFake BR — Gerador de Dados para Testes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="container">
-    <h2>Gerador de Dados</h2>
-    <div class="field-container">
-      <label for="cpf"><b>CPF:</b></label>
-      <div class="input-container">
-        <input type="text" id="cpf" readonly>
-        <button class="copy-btn" onclick="copiarConteudo('cpf')">
-          <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
-        </button>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <i class="fa-solid fa-database"></i>
+        <span>DataFake <strong>BR</strong></span>
       </div>
+      <p class="header-subtitle">Gerador de dados fictícios para testes e desenvolvimento</p>
     </div>
+  </header>
 
-    <label for="rg"><b>RG:</b></label>
-    <div class="input-container">
-      <input type="text" id="rg" readonly>
-      <button class="copy-btn" onclick="copiarConteudo('rg')">
-        <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
+  <!-- Main -->
+  <main class="main">
+    <div class="card">
+
+      <div class="card-header">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <h2>Gerar Dados Aleatórios</h2>
+      </div>
+
+      <div class="fields-grid">
+
+        <div class="field-group">
+          <label for="cpf"><i class="fa-solid fa-id-card field-icon"></i> CPF</label>
+          <div class="input-container">
+            <input type="text" id="cpf" placeholder="000.000.000-00" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('cpf')" title="Copiar CPF">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="rg"><i class="fa-solid fa-address-card field-icon"></i> RG</label>
+          <div class="input-container">
+            <input type="text" id="rg" placeholder="00.000.000-0" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('rg')" title="Copiar RG">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="cartao"><i class="fa-solid fa-credit-card field-icon"></i> Número de Cartão</label>
+          <div class="input-container input-container--card">
+            <i class="card-brand-icon" id="cartao-bandeira"></i>
+            <input type="text" id="cartao" placeholder="0000 0000 0000 0000" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('cartao')" title="Copiar número do cartão">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="cep"><i class="fa-solid fa-location-dot field-icon"></i> CEP</label>
+          <div class="input-container">
+            <input type="text" id="cep" placeholder="00000-000" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('cep')" title="Copiar CEP">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+          <p class="field-info" id="cep-info"></p>
+        </div>
+
+        <div class="field-group">
+          <label for="email"><i class="fa-solid fa-envelope field-icon"></i> E-mail</label>
+          <div class="input-container">
+            <input type="text" id="email" placeholder="exemplo@email.com" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('email')" title="Copiar e-mail">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="telefone"><i class="fa-solid fa-phone field-icon"></i> Telefone</label>
+          <div class="input-container">
+            <input type="text" id="telefone" placeholder="(00) 90000-0000" readonly>
+            <button class="copy-btn" onclick="copiarConteudo('telefone')" title="Copiar telefone">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="btn-gerar" onclick="gerarDados()">
+        <i class="fa-solid fa-rotate"></i>
+        Gerar Dados
       </button>
+
     </div>
 
-    <label for="cartao"><b>Número de Cartão:</b></label>
-    <div class="input-container">
-      <input type="text" id="cartao" readonly>
-      <button class="copy-btn" onclick="copiarConteudo('cartao')">
-        <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
-      </button>
+    <!-- Aviso -->
+    <div class="aviso">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>Todos os dados gerados são <strong>fictícios</strong> e destinados exclusivamente para uso em testes e desenvolvimento. Não representam pessoas ou informações reais.</span>
     </div>
 
-    <label for="cep"><b>CEP:</b></label>
-    <div class="input-container">
-      <input type="text" id="cep" readonly>
-      <button class="copy-btn" onclick="copiarConteudo('cep')">
-        <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
-      </button>
-    </div>
+  </main>
 
-    <label for="email"><b>E-mail:</b></label>
-    <div class="input-container">
-      <input type="text" id="email" readonly>
-      <button class="copy-btn" onclick="copiarConteudo('email')">
-        <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
-      </button>
-    </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Desenvolvido por <strong>anselmotadeu</strong> &bull; DataFake BR &copy; 2026</p>
+  </footer>
 
-    <label for="telefone"><b>Número de Telefone:</b></label>
-    <div class="input-container">
-      <input type="text" id="telefone" readonly>
-      <button class="copy-btn" onclick="copiarConteudo('telefone')">
-        <img class="copy-icon" src="./images/dados-copy.png" alt="Copiar">
-      </button>
-    </div>
-
-    <button onclick="gerarDados()"><b>Gerar Dados</b></button>
+  <!-- Toast de notificação -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-check"></i>
+    <span id="toast-msg">Copiado!</span>
   </div>
 
   <script type="text/javascript" src="app.js"></script>
